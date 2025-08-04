@@ -1,0 +1,72 @@
+{% load static %}
+
+<nav class="bg-white shadow-md sticky top-0 z-50">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="flex justify-between items-center h-16">
+
+      <!-- Logo & Site Name -->
+      <div class="flex items-center gap-x-3">
+        <a href="{% url 'home' %}">
+          <img src="{% static 'core/images/maithilrang.png' %}" alt="MaithilRang Logo"
+            class="h-10 sm:h-12 w-auto">
+        </a>
+        <span class="text-xl sm:text-2xl font-bold text-green-800">Maithil <span class="text-pink-600">रंग</span></span>
+      </div>
+
+      <!-- Desktop Navigation -->
+      <div class="hidden md:flex items-center space-x-6 text-sm font-medium text-gray-700">
+        <a href="{% url 'home' %}" class="hover:text-blue-800 transition">Home</a>
+        <a href="{% url 'paintings' %}" class="hover:text-blue-800 transition">Paintings</a>
+        <a href="{% url 'aboutus' %}" class="hover:text-blue-800 transition">About Us</a>
+        <a href="{% url 'contactus' %}" class="hover:text-blue-800 transition">Contact Us</a>
+      </div>
+
+      <!-- Right Icons (Cart + Auth Buttons) -->
+      <div class="flex items-center gap-x-4">
+        
+        <!-- Cart Icon -->
+        <a href="#" class="relative text-blue-800 hover:text-blue-600 transition">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"
+            stroke-linecap="round" stroke-linejoin="round">
+            <path d="M3 3h2l.4 2M7 13h14l-1.35 5.4a1 1 0 0 1-.98.6H7.4a1 1 0 0 1-.98-.8L5 5H3" />
+            <circle cx="9" cy="21" r="1" />
+            <circle cx="20" cy="21" r="1" />
+          </svg>
+          <span class="absolute -top-2 -right-2 bg-red-500 text-white text-xs w-5 h-5 flex items-center justify-center rounded-full">0</span>
+        </a>
+
+        <!-- Desktop Auth Buttons -->
+        <div class="hidden md:flex items-center gap-x-2">
+          <a href="{% url 'login' %}" class="px-3 py-1.5 border border-blue-800 text-blue-800 rounded hover:bg-blue-50 transition text-sm">Log In</a>
+          <a href="{% url 'signup' %}" class="px-3 py-1.5 bg-blue-800 text-white rounded hover:bg-blue-700 transition text-sm">Sign Up</a>
+        </div>
+
+        <!-- Mobile Menu Button -->
+        <button id="mobile-menu-button" class="md:hidden text-blue-800 focus:outline-none">
+          <svg class="w-7 h-7" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"
+            stroke-linecap="round" stroke-linejoin="round">
+            <path d="M4 6h16M4 12h16M4 18h16" />
+          </svg>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Mobile Dropdown Menu -->
+  <div id="mobile-menu" class="hidden md:hidden bg-white border-t px-4 pt-4 pb-6 space-y-3 text-sm font-medium text-gray-700">
+    <a href="{% url 'home' %}" class="block hover:text-blue-800 transition">Home</a>
+    <a href="{% url 'paintings' %}" class="block hover:text-blue-800 transition">Paintings</a>
+    <a href="{% url 'aboutus' %}" class="block hover:text-blue-800 transition">About Us</a>
+    <a href="{% url 'contactus' %}" class="block hover:text-blue-800 transition">Contact Us</a>
+    <a href="{% url 'login' %}" class="block border border-blue-800 text-blue-800 px-4 py-2 rounded hover:bg-blue-50 transition">Log In</a>
+    <a href="{% url 'signup' %}" class="block bg-blue-800 text-white px-4 py-2 rounded hover:bg-blue-700 transition">Sign Up</a>
+  </div>
+</nav>
+
+<script>
+  const menuBtn = document.getElementById('mobile-menu-button');
+  const mobileMenu = document.getElementById('mobile-menu');
+  menuBtn.addEventListener('click', () => {
+    mobileMenu.classList.toggle('hidden');
+  });
+</script>

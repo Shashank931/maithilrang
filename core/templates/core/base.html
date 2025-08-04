@@ -1,0 +1,26 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{% static 'core/css/main.css' %}">
+    <title>{% block title %}{% endblock %}</title>
+</head>
+<body>
+    {% block navbar %}
+    
+    {% include "core/components/navbar.html" %}
+    
+    {% endblock %}
+
+    {% block main %}{% endblock %}
+
+
+    {% block footer %}
+    
+    {% include "core/components/footer.html" %}
+
+    {% endblock %}
+</body>
+</html>

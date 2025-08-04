@@ -1,0 +1,64 @@
+<!-- Footer -->
+ {% load static %}
+<footer class="bg-white text-black border-t mt-12">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+
+      <!-- Logo & Tagline -->
+      <div>
+        <img src="{% static 'core/images/maithilrang.png' %}" alt="MaithilRang Logo" class="h-14 mb-3">
+        <p class="text-sm text-gray-700">
+          Celebrating the heritage of Mithila through authentic, hand-painted artwork.
+        </p>
+      </div>
+
+      <!-- Quick Links -->
+      <div>
+        <h4 class="text-lg font-semibold mb-4">Quick Links</h4>
+        <ul class="space-y-2 text-sm text-gray-800">
+          <li><a href="{% url 'home' %}" class="hover:text-blue-800 transition">Home</a></li>
+          <li><a href="{% url "paintings" %}" class="hover:text-blue-800 transition">Paintings</a></li>
+          <li><a href="{% url 'aboutus' %}" class="hover:text-blue-800 transition">About Us</a></li>
+          <li><a href="{% url 'contactus' %}" class="hover:text-blue-800 transition">Contact Us</a></li>
+        </ul>
+      </div>
+
+      <!-- Contact Info -->
+      <div>
+        <h4 class="text-lg font-semibold mb-4">Contact</h4>
+        <p class="text-sm text-gray-800">
+          📍 Darbhanga, Bihar, India<br>
+          📞 +91 9326579230<br>
+          📧 ranjanamaithilrang@gmail.com
+        </p>
+      </div>
+
+      <!-- Social Media -->
+      <div>
+        <h4 class="text-lg font-semibold mb-4">Follow Us</h4>
+        <div class="flex space-x-4 text-gray-700">
+          <a href="#" class="hover:text-blue-800 transition" aria-label="Facebook">
+            <i class="fab fa-facebook-f"></i>
+          </a>
+          <a href="#" class="hover:text-blue-800 transition" aria-label="Instagram">
+            <i class="fab fa-instagram"></i>
+          </a>
+          <a href="#" class="hover:text-blue-800 transition" aria-label="Twitter">
+            <i class="fab fa-twitter"></i>
+          </a>
+          <a href="#" class="hover:text-blue-800 transition" aria-label="YouTube">
+            <i class="fab fa-youtube"></i>
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bottom -->
+    <div class="border-t mt-10 pt-6 text-center text-sm text-black ">
+       © 2025 <strong class="text-black">MaithilRang</strong>. All rights reserved.
+    </div>
+  </div>
+</footer>
+
+<!-- Font Awesome CDN for social icons -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" integrity="sha512-..." crossorigin="anonymous" referrerpolicy="no-referrer" />

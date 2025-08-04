@@ -1,0 +1,78 @@
+{% extends "core/base.html" %} {% block title %}Maithil Rang{% endblock %} 
+
+
+{% block main %} 
+
+{% load static %}
+
+
+<!-- Hero Section -->
+<section class="bg-blue-100 py-12 px-4 md:px-8 rounded-b-3xl">
+  <div
+    class="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-8"
+  >
+    <div>
+      <h1 class="text-4xl md:text-5xl font-bold text-gray-800 mb-4">
+        Bring Maithili Art Into Your Home
+      </h1>
+      <p class="text-gray-600 text-lg mb-6 max-w-md">
+        Discover the charm of traditional Madhubani paintings by local artists.
+        Each piece is hand-painted and unique.
+      </p>
+      <a
+        href="{% url "paintings" %}"
+        class="inline-block bg-orange-500 hover:bg-orange-600 text-white font-semibold px-6 py-3 rounded-lg shadow-lg"
+      >
+        See Collection
+      </a>
+    </div>
+    <img
+      src="{% static 'core/images/hero image.png' %}"
+      alt="Maithili Painting"
+      class="w-full md:w-1/2 rounded-xl shadow-lg"
+    />
+  </div>
+</section>
+
+<!-- Product Section -->
+<section class="py-16 px-4 md:px-8 bg-gray-100">
+  <div class="max-w-7xl mx-auto">
+    <h2 class="text-3xl font-bold text-center text-gray-800 mb-4">
+      Best Sales of Maithili Paintings
+    </h2>
+    <p class="text-center text-gray-500 mb-10 max-w-2xl mx-auto">
+      Handpicked art from our talented Maithil artists. Brighten your space with
+      heritage and color.
+    </p>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8">
+      {% for product in products %}
+      <div
+        class="bg-white border border-gray-200 rounded-xl shadow-md p-4 text-center"
+      >
+       <a href="{{product.get_url}}"> <img
+          src="{{product.Product_image.url}}"
+          alt="Painting 2"
+          class="w-full h-64 md:h-80 object-contain rounded-lg mb-4"
+        /></a>
+       <a href="{{product.get_url}}"> <h3 class="text-lg font-semibold mb-1">{{product.product_name}}</h3></a>
+      <p class="text-sm text-gray-600 mb-2">{{product.description}}</p>
+      <span class="text-orange-500-800 font-bold text-md mb-4">₹{{product.price}}</span>
+        <button
+          class="mt-4 bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-lg w-full font-medium"
+        >
+          Add to Cart
+        </button>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+{% endblock %}
+
+
+
+
+
+

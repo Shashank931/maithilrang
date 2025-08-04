@@ -1,0 +1,81 @@
+{% extends "core/base.html" %}
+
+{% block main %}
+    {% load static %}
+
+<body class="bg-gray-100 font-sans text-gray-800">
+
+
+
+  <!-- Main Content -->
+  <section class="max-w-6xl mx-auto px-6 py-12">
+    <h2 class="text-4xl font-bold text-center mb-12">About Our Artist</h2>
+
+    <div class="flex flex-col-reverse md:flex-row items-center md:items-start bg-white rounded-xl shadow-md overflow-hidden">
+      
+      <!-- Left: Text Info -->
+      <div class="md:w-1/2 p-6">
+        <h3 class="text-4xl font-semibold mb-2">Ranjana Choudhary</h3>
+        <p class="text-gray-600 mb-4 text-2xl">
+          Ranjana Choudhary is a traditional Madhubani artist from Bihar, India, with over 23 years of experience. Her work reflects the rich heritage of Mithila culture, using natural colors and intricate patterns to depict mythology, nature, and village life.
+        </p>
+        <p class="text-sm text-gray-500 mb-1">📞 Contact: <span class="text-pink-600 font-medium">+91 9326579230
+</span></p>
+<p class="text-sm text-gray-500">📩 Email: <span class="text-pink-600 font-medium"> ranjanamaithilrang@gmail.com</span></p>
+        <p class="text-sm text-gray-500">🎨 Specialization: Traditional Madhubani Painting</p>
+      </div>
+      
+
+      <!-- Right: Image -->
+      <div class="md:w-1/2 p-6 flex justify-center">
+        <img src="{% static 'core/images/artist1.png' %}" alt="RanjanaChoudhary" class="w-64 h-auto object-cover rounded-lg border-2 border-pink-500 shadow">
+      </div>
+
+    </div>
+  </section>
+
+  <!-- Paintings Section -->
+<section class="max-w-6xl mx-auto px-6 py-12">
+  <h2 class="text-3xl font-bold text-center mb-8">Featured Paintings</h2>
+
+  <div class="grid gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+
+    <!-- Painting Card 1 -->
+    <div class="bg-white rounded-lg shadow hover:shadow-lg transition p-4">
+      <img src="{% static 'core/images/painting1.jpg' %}" alt="Painting 1"
+           class="w-full h-64 md:h-80 object-contain bg-gray-50 rounded-md mb-4">
+      <h3 class="text-lg font-semibold">Paintings</h3>
+      <p class="text-sm text-gray-600">Traditional Mithila style</p>
+    </div>
+
+    <!-- Painting Card 2 -->
+    <div class="bg-white rounded-lg shadow hover:shadow-lg transition p-4">
+      <img src="{% static 'core/images/painting2.jpg' %}" alt="Painting 2"
+           class="w-full h-64 md:h-80 object-contain bg-gray-50 rounded-md mb-4">
+      <h3 class="text-lg font-semibold">Lord Ganesha</h3>
+      <p class="text-sm text-gray-600">Symbol of prosperity</p>
+    </div>
+
+    <!-- Painting Card 3 -->
+    <div class="bg-white rounded-lg shadow hover:shadow-lg transition p-4">
+      <img src="{% static 'core/images/painting3.jpg' %}" alt="Painting 3"
+           class="w-full h-64 md:h-80 object-contain bg-gray-50 rounded-md mb-4">
+      <h3 class="text-lg font-semibold">Lord Saraswati</h3>
+      <p class="text-sm text-gray-600">Daily scenes in Mithila</p>
+    </div>
+
+    <!-- Painting Card 4 -->
+    <div class="bg-white rounded-lg shadow hover:shadow-lg transition p-4">
+      <img src="{% static 'core/images/painting4.jpg' %}" alt="Painting 4"
+           class="w-full h-64 md:h-80 object-contain bg-gray-50 rounded-md mb-4">
+      <h3 class="text-lg font-semibold">Lord Radha Krishna</h3>
+      <p class="text-sm text-gray-600">Hand-painted on handmade paper</p>
+    </div>
+
+  </div>
+</section>
+
+</body>
+</html>
+
+{% endblock %}

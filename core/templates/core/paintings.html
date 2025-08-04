@@ -1,0 +1,90 @@
+{% extends "core/base.html" %}
+{% load static %}
+
+{% block title %}Our Paintings - MaithilRang{% endblock %}
+
+{% block main %}
+<section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 bg-gray-100">
+  <h2 class="text-3xl font-bold text-center mb-10">Explore Our Paintings</h2>
+
+  <!-- Mobile Category Dropdown -->
+  <div class="lg:hidden mb-6">
+    <label for="categoryDropdown" class="block text-base font-semibold mb-2">Select Category</label>
+    <select
+      id="categoryDropdown"
+      class="w-full border border-gray-300 rounded-lg px-4 py-2 text-gray-700 bg-white focus:outline-none focus:ring-2 focus:ring-orange-500"
+      onchange="if(this.value) window.location.href=this.value;"
+    >
+      <option value="{% url 'paintings' %}">All Paintings</option>
+      {% for category in links %}
+      <option value="{{ category.get_url }}">{{ category.category_name }}</option>
+      {% endfor %}
+    </select>
+  </div>
+
+  <div class="flex flex-col lg:flex-row gap-8">
+
+    <!-- Desktop Sidebar -->
+    <aside class="hidden lg:block lg:w-1/4 space-y-4 bg-white p-4 rounded-xl shadow-sm text-sm max-h-[450px] overflow-auto">
+      <!-- Categories -->
+      <div>
+        <h4 class="font-semibold text-base mb-2 border-b pb-1">Categories</h4>
+        <ul class="space-y-1">
+          <li><a href="{% url 'paintings' %}" class="hover:text-orange-500">All Paintings</a></li>
+          {% for category in links %}
+          <li><a href="{{ category.get_url }}" class="hover:text-orange-500">{{ category.category_name }}</a></li>
+          {% endfor %}
+        </ul>
+      </div>
+
+      <!-- Price Range -->
+      <div>
+        <h4 class="font-semibold text-base mb-2 border-b pb-1">Price Range</h4>
+        <div class="flex flex-col gap-2">
+          <div class="flex items-center gap-2">
+            <label for="min-price" class="w-1/2">Min</label>
+            <select id="min-price" class="w-full border border-gray-300 rounded px-2 py-1">
+              <option>₹500</option>
+              <option>₹1000</option>
+              <option>₹1500</option>
+              <option>₹2000</option>
+            </select>
+          </div>
+          <div class="flex items-center gap-2">
+            <label for="max-price" class="w-1/2">Max</label>
+            <select id="max-price" class="w-full border border-gray-300 rounded px-2 py-1">
+              <option>₹1500</option>
+              <option>₹2000</option>
+              <option>₹2500</option>
+              <option>₹3000</option>
+            </select>
+          </div>
+          <button class="w-full mt-1 bg-orange-500 text-white py-2 rounded hover:bg-orange-600">
+            Apply
+          </button>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Painting Cards Grid -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8 w-full">
+      {% for product in products %}
+      <div class="bg-white border border-gray-200 rounded-xl shadow-md p-4 text-center">
+        <a href="{{product.get_url}}"><img
+          src="{{ product.Product_image.url }}"
+          alt="{{ product.product_name }}"
+          class="w-full h-64 md:h-80 object-contain rounded-lg mb-4"
+        /></a>
+        <a href="{{product.get_url}}"><h3 class="text-lg font-semibold mb-1">{{ product.product_name }}</h3></a>
+        <p class="text-sm text-gray-600 mb-2">{{ product.description }}</p>
+        <span class="text-black font-bold text-md mb-4 block">₹{{ product.price }}</span>
+        <button class="mt-4 bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-lg w-full font-medium">
+          Add to Cart
+        </button>
+      </div>
+      {% endfor %}
+    </div>
+
+  </div>
+</section>
+{% endblock %}
