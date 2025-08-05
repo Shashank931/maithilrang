@@ -1,58 +1,54 @@
 # Python
 __pycache__/
 *.py[cod]
-*.pyo
-*.pyc
-*.log
-*.pot
 *.sqlite3
+*.pyo
+*.pyd
+*.pyc
+*.pdb
+*.egg-info/
+*.log
 
-# Virtualenv
+# Virtual environment
+.env
 venv/
+.venv/
 env/
 ENV/
-.venv/
-.Python
 
-# Django
+# Django stuff:
 *.db
+*.pot
+*.pyc
+*.mo
 db.sqlite3
-local_settings.py
+media/
+staticfiles/
+static_root/
 
-# Static and Media
-/static/
-/staticfiles/
-/media/
+# Render logs
+*.log
 
-# Tailwind (Node/NPM)
+# Tailwind / PostCSS / Node
 node_modules/
-npm-debug.log
-yarn-error.log
-
-# VS Code
-.vscode/
-
-# macOS
-.DS_Store
-
-# Environment files
-.env
-*.env
-
-# Migrations (optional)
-**/migrations/*.py
-!**/migrations/__init__.py
-
-# Build files
-build/
 dist/
-*.egg-info/
+build/
+*.css.map
+*.js.map
 
-# Render specific
-*.render-log
-render.yaml
+# OS files
+.DS_Store
+Thumbs.db
 
-# OS / Editor backup files
-*.swp
-*~
-*.bak
+# IDE-specific
+.vscode/
+.idea/
+
+# Environment
+.env.*
+.env
+
+# If you use migrations and want to keep them, comment this out
+# Otherwise ignore auto-created migrations if not using them
+# */migrations/*.py
+# */migrations/*.pyc
