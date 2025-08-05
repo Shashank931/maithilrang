@@ -78,9 +78,12 @@
         <a href="{{product.get_url}}"><h3 class="text-lg font-semibold mb-1">{{ product.product_name }}</h3></a>
         <p class="text-sm text-gray-600 mb-2">{{ product.description }}</p>
         <span class="text-black font-bold text-md mb-4 block">₹{{ product.price }}</span>
-        <button class="mt-4 bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-lg w-full font-medium">
+        <form  method="post" action="{% url 'add_cart' product.id  %}">
+          {% csrf_token %}
+        <button type='submit'class="mt-4 bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-lg w-full font-medium">
           Add to Cart
         </button>
+        </form>
       </div>
       {% endfor %}
     </div>

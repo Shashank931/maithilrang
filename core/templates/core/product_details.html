@@ -27,7 +27,7 @@
       
 
       <!-- Add to Cart Button -->
-      {% comment %} <form method="post" action="{% url 'add_to_cart' product.id %}"> {% endcomment %}
+       <form method="post" action="{% url 'add_cart' single_product.id %}"> 
         {% csrf_token %}
         {% if single_product.stock|add:"0" <= 0 %}
           <h2 class='text-2xl text-red-500'>Out of stock</h2>
