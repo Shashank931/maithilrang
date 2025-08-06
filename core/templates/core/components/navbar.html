@@ -51,13 +51,15 @@
         </div>
 
         <!-- Mobile Search Icon -->
-<button id="mobile-search-toggle" class="md:hidden text-blue-800 focus:outline-none">
-  <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"
-       stroke-linecap="round" stroke-linejoin="round">
-    <circle cx="11" cy="11" r="8" />
-    <line x1="21" y1="21" x2="16.65" y2="16.65" />
-  </svg>
-</button>
+        
+
+        <button name='keyword' id="mobile-search-toggle" class="md:hidden text-blue-800 focus:outline-none">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"
+              stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="11" cy="11" r="8" />
+            <line x1="21" y1="21" x2="16.65" y2="16.65" />
+          </svg>
+        </button>
 
 
         <!-- Mobile Menu Button -->
@@ -84,7 +86,7 @@
   <!-- Mobile Search Bar (Hidden by default) -->
 <div id="mobile-search" class="hidden md:hidden px-4 py-3 bg-white border-t">
   <form action="{% url 'search' %}" method="GET" class="flex items-center">
-    <input type="text" name="q" placeholder="Search..." 
+    <input type="text" name="keyword" placeholder="Search..." 
            class="flex-1 px-3 py-2 border rounded-l-md border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm">
     <button type="submit" class="bg-blue-800 text-white px-4 py-2 rounded-r-md hover:bg-blue-700 transition text-sm">
       Search
