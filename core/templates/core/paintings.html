@@ -5,8 +5,12 @@
 
 {% block main %}
 <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 bg-gray-100">
+  {% if 'search' in request.path %}
+  <h2 class="text-3xl font-bold text-center mb-10">Search Result</h2>
+  {% else %}
   <h2 class="text-3xl font-bold text-center mb-10">Explore Our Paintings</h2>
-
+  
+  {% endif %}
   <!-- Mobile Category Dropdown -->
   <div class="lg:hidden mb-6">
     <label for="categoryDropdown" class="block text-base font-semibold mb-2">Select Category</label>
@@ -68,6 +72,7 @@
 
     <!-- Painting Cards Grid -->
     <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8 w-full">
+    {% if products %}
       {% for product in products %}
       <div class="bg-white border border-gray-200 rounded-xl shadow-md p-4 text-center">
         <a href="{{product.get_url}}"><img
@@ -82,10 +87,15 @@
           {% csrf_token %}
         <button type='submit'class="mt-4 bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-lg w-full font-medium">
           Add to Cart
-        </button>
+        </button> 
         </form>
       </div>
       {% endfor %}
+    {% else %}
+      <div>
+       <h2 class="text-1xl font-bold text-center mb-10">No Result Found. Please Try Again</h2>
+      </div> 
+    {% endif %}
     </div>
 
   </div>

@@ -3,6 +3,7 @@ from store.models import Product
 from category.models import Category
 from carts.models import Cart , CartItem 
 from django.core.exceptions import ObjectDoesNotExist
+from django.db.models import Q
 
 
 # Create your views here.
@@ -115,6 +116,8 @@ def remove_cart_item (req , product_id):
 
 def cart(req, total=0, quantity=0):
     try:
+        tax =0
+        grand_total = 0
         cart = Cart.objects.get(cart_id=_cart_id(req))
         cart_items = CartItem.objects.filter(cart=cart, is_active=True)
         for item in cart_items:
@@ -137,6 +140,18 @@ def cart(req, total=0, quantity=0):
     return render(req, 'core/cart.html', context)
 
 
+
+def search(req):
+    products = [] 
+    if 'keyword' in req.GET:
+        keyword = req.GET['keyword']
+        if keyword:
+            products = Product.objects.order_by('-created_date').filter(Q(description__icontains=keyword) | Q( product_name__icontains = keyword))
+            
+    context ={
+        'products':products,
+    }
+    return render(req , 'core/paintings.html' , context)
 
 
 def login(req):

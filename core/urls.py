@@ -1,5 +1,5 @@
 from django.urls import path
-from core.views import home , login , signup , aboutus , paintings ,contactus , product_details , cart , add_cart , remove_cart , remove_cart_item
+from core.views import home , login , signup , aboutus , paintings ,contactus , product_details , cart , add_cart , remove_cart , remove_cart_item , search
 
 urlpatterns = [
 
@@ -15,14 +15,16 @@ urlpatterns = [
 
     path('paintings/',paintings, name = 'paintings' ),
 
-    path('paintings/<slug:category_slug>/',paintings, name = 'paintings_by_category' ),
+    path('paintings/category/<slug:category_slug>/',paintings, name = 'paintings_by_category' ),
 
-    path('paintings/<slug:category_slug>/<slug:product_slug>/',product_details, name = 'product_details' ),
+    path('paintings/category/<slug:category_slug>/<slug:product_slug>/',product_details, name = 'product_details' ),
 
     path('cart/', cart , name='cart'),
     path('add_cart/<int:product_id>/' , add_cart , name = 'add_cart'),
     path('remove_cart/<int:product_id>/' , remove_cart , name = 'remove_cart'),
     path('remove_cart_item/<int:product_id>/' , remove_cart_item , name = 'remove_cart_item'),
+
+    path ('paintings/search/' , search , name='search'),
 
 
 ]
