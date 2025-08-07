@@ -5,6 +5,16 @@
 
 {% block main %}
 <div class="bg-gray-100 min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+
+  {% with request.GET.command as command %}
+  {% if command == "verification" %}
+     <p class="text-success">"Thank you for registering with us .we have sent you a verification email on your register email [{{request.GET.email}}]</p>
+  
+
+
+  {% else %}
+  
+  
   <div class="bg-white shadow-xl rounded-xl overflow-hidden flex flex-col lg:flex-row w-full max-w-5xl">
 
     <!-- Left Side Image -->
@@ -42,7 +52,21 @@
       </div>
 
       <!-- Login Form -->
-      <form action="#" method="POST" class="space-y-4">
+       {% if messages %}
+                  <div class="mb-4">
+                    {% for message in messages %}
+                      <div class="text-center text-sm p-2 rounded
+                        {% if message.tags == 'success' %}
+                          bg-green-100 text-green-800
+                        {% elif message.tags == 'error' %}
+                          bg-red-100 text-red-800
+                        {% endif %}">
+                        {{ message }}
+                      </div>
+                    {% endfor %}
+                  </div>
+                {% endif %}
+      <form action="{% url "login" %}" method="POST" class="space-y-4">
         {% csrf_token %}
         <input type="email" name="email" placeholder="Email" required class="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-black bg-gray-50">
         <input type="password" name="password" placeholder="Password" required class="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-black bg-gray-50">
@@ -63,5 +87,7 @@
       <p class="text-xs text-gray-400 text-center mt-6">© 2025 MaithilRang - All Rights Reserved</p>
     </div>
   </div>
+  {% endif %}
+  {% endwith %}
 </div>
 {% endblock %}

@@ -1,6 +1,5 @@
 from django.urls import path
-from core.views import home , login , signup , aboutus , paintings ,contactus , product_details , cart , add_cart , remove_cart , remove_cart_item , search
-
+from core.views import home , login , signup , aboutus , paintings ,contactus , product_details , cart , add_cart , remove_cart , remove_cart_item , search , logout ,activate
 urlpatterns = [
 
     path('',home, name = 'home' ),
@@ -8,6 +7,8 @@ urlpatterns = [
     path('login/',login, name = 'login' ),
 
     path('signup/',signup, name = 'signup' ),
+
+    path('logout/',logout, name = 'logout' ),
 
     path('aboutus/',aboutus, name = 'aboutus' ),
 
@@ -26,5 +27,7 @@ urlpatterns = [
 
     path ('paintings/search/' , search , name='search'),
 
+
+    path ('activate/<uidb64>/<token>/' , activate , name='activate')
 
 ]
