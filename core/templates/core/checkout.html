@@ -1,0 +1,123 @@
+{% extends "core/base.html" %}
+{% load static %}
+
+{% block title %}Your Cart - MaithilRang{% endblock %}
+
+{% block main %}
+<section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+  <h1 class="text-3xl font-bold mb-8 text-gray-900">🛒 Your Shopping Cart</h1>
+
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+    
+    <!-- Left: Billing Details -->
+    <div class="lg:col-span-2 bg-white border border-gray-200 rounded-xl shadow-lg p-6">
+      <h2 class="text-xl font-semibold mb-6 text-gray-800">Billing Details</h2>
+      
+    <form action="#" method="POST" class="space-y-5">
+        {% csrf_token %}
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">First Name</label>
+            <input type="text" name="first_name" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" required>
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Last Name</label>
+            <input type="text" name="last_name" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" required>
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Email Address</label>
+          <input type="email" name="email" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" required>
+        </div>
+
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Phone Number</label>
+          <input type="tel" name="phone" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" required>
+        </div>
+
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Address</label>
+          <input type="text" name="address" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" required>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">City</label>
+            <input type="text" name="city" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" required>
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">State</label>
+            <input type="text" name="state" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" required>
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">ZIP Code</label>
+            <input type="text" name="zip" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" required>
+          </div>
+        </div>
+     
+    </div>
+
+    <!-- Right: Order Summary -->
+    <div class="bg-white border border-gray-200 rounded-xl shadow-lg p-6 h-fit">
+      <h2 class="text-xl font-semibold mb-6 text-gray-800">Order Summary</h2>
+      
+      <div class="overflow-x-auto">
+        <table class="w-full text-sm text-left border-collapse">
+          <thead class="bg-gray-100 text-gray-700 uppercase text-xs">
+            <tr>
+              <th class="px-4 py-3">Product</th>
+              <th class="px-4 py-3 text-center">Qty</th>
+              <th class="px-4 py-3 text-right">Price</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for cart_item in cart_items %}
+            <tr class="border-b hover:bg-gray-50">
+              <!-- Product -->
+              <td class="px-4 py-4">
+                <div class="flex items-center gap-3">
+                  <img src="{{ cart_item.product.Product_image.url }}" alt="{{ cart_item.product.product_name }}" class="w-14 h-14 object-contain border border-gray-200 rounded-lg" />
+                  <div>
+                    <a href="{{ cart_item.product.get_url }}" class="font-medium text-gray-900 hover:underline">{{ cart_item.product.product_name }}</a>
+                    {% if cart_item.product.description %}
+                    <p class="text-xs text-gray-500">{{ cart_item.product.description }}</p>
+                    {% endif %}
+                  </div>
+                </div>
+              </td>
+              <!-- Quantity -->
+              <td class="px-4 py-4 text-center font-medium text-gray-700">
+                {{ cart_item.quantity }}
+              </td>
+              <!-- Price -->
+              <td class="px-4 py-4 text-right">
+                <p class="font-semibold text-gray-900">₹{{ cart_item.sub_total }}</p>
+                <p class="text-xs text-gray-500">₹{{ cart_item.product.price }} each</p>
+              </td>
+            </tr>
+            {% empty %}
+            <tr>
+              <td colspan="3" class="text-center py-10 text-gray-500">Your cart is empty.</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Buttons -->
+      <div class="mt-6 space-y-3">
+        <button  type='submit' name="submit" class="w-full block bg-blue-600 hover:bg-blue-700 text-white text-center font-semibold py-3 rounded-lg shadow transition">
+          Place Order
+        </button>
+        <a href="{% url 'paintings' %}" class="w-full block text-center border border-gray-300 rounded-lg py-3 hover:bg-gray-50 transition">
+          Continue Shopping
+        </a>
+    </form>
+      </div>
+    </div>
+
+  </div>
+</section>
+{% endblock %}

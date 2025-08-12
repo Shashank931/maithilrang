@@ -1,0 +1,70 @@
+{% extends 'core/base.html' %}
+{% block main %}
+<div class="min-h-screen bg-gray-100 flex flex-col md:flex-row">
+  
+  <!-- Sidebar -->
+  <aside class="w-full md:w-64 bg-white shadow-md">
+    <div class="p-6 border-b">
+      <h2 class="text-lg font-semibold">Hello, {{ user.first_name|default:user.username }}</h2>
+      <p class="text-sm text-gray-500">Manage your account</p>
+    </div>
+    <nav class="mt-4">
+      <a href="#" class="block px-6 py-3 text-gray-700 hover:bg-orange-100">📋 Dashboard</a>
+      <a href="#" class="block px-6 py-3 text-gray-700 hover:bg-orange-100">🛍️ My Orders</a>
+      <a href="#" class="block px-6 py-3 text-gray-700 hover:bg-orange-100">👤 Profile</a>
+      <a href="#" class="block px-6 py-3 text-gray-700 hover:bg-orange-100">📍 Address</a>
+      <a href="{% url 'logout' %}" class="block px-6 py-3 text-red-600 hover:bg-red-100">🚪 Logout</a>
+    </nav>
+  </aside>
+
+  <!-- Main Content -->
+  <main class="flex-1 p-6">
+    <h1 class="text-2xl font-bold mb-4">Dashboard Overview</h1>
+
+    <!-- Stats Cards -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
+      <div class="bg-white shadow-md rounded-lg p-4">
+        <h3 class="text-gray-500">Total Orders</h3>
+        <p class="text-2xl font-bold">12</p>
+      </div>
+      <div class="bg-white shadow-md rounded-lg p-4">
+        <h3 class="text-gray-500">Pending Orders</h3>
+        <p class="text-2xl font-bold">3</p>
+      </div>
+      <div class="bg-white shadow-md rounded-lg p-4">
+        <h3 class="text-gray-500">Wishlist Items</h3>
+        <p class="text-2xl font-bold">5</p>
+      </div>
+    </div>
+
+    <!-- Recent Orders Table -->
+    <div class="bg-white shadow-md rounded-lg overflow-x-auto">
+      <table class="min-w-full divide-y divide-gray-200">
+        <thead class="bg-gray-50">
+          <tr>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Order ID</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Date</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Total</th>
+          </tr>
+        </thead>
+        <tbody class="bg-white divide-y divide-gray-200">
+          <tr>
+            <td class="px-6 py-4">#12345</td>
+            <td class="px-6 py-4">Aug 5, 2025</td>
+            <td class="px-6 py-4"><span class="px-2 py-1 text-xs rounded-full bg-green-100 text-green-700">Delivered</span></td>
+            <td class="px-6 py-4">₹1200</td>
+          </tr>
+          <tr>
+            <td class="px-6 py-4">#12346</td>
+            <td class="px-6 py-4">Aug 3, 2025</td>
+            <td class="px-6 py-4"><span class="px-2 py-1 text-xs rounded-full bg-yellow-100 text-yellow-700">Pending</span></td>
+            <td class="px-6 py-4">₹800</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </main>
+
+</div>
+{% endblock %}

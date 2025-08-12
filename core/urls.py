@@ -1,5 +1,5 @@
 from django.urls import path
-from core.views import home , login , signup , aboutus , paintings ,contactus , product_details , cart , add_cart , remove_cart , remove_cart_item , search , logout ,activate
+from core.views import home , login , signup , aboutus , paintings ,contactus , product_details , cart , add_cart , remove_cart , remove_cart_item , search , logout ,activate , dashboard ,forgot_password , resetpassword_validate , resetPassword , checkout
 urlpatterns = [
 
     path('',home, name = 'home' ),
@@ -28,6 +28,15 @@ urlpatterns = [
     path ('paintings/search/' , search , name='search'),
 
 
-    path ('activate/<uidb64>/<token>/' , activate , name='activate')
+    path ('activate/<uidb64>/<token>/' , activate , name='activate'),
 
-]
+    path('dashboard/', dashboard , name='dashboard'),
+
+    path('forgot_password/', forgot_password , name='forgot_password'),
+    
+    path ('resetpassword_validate/<uidb64>/<token>/' , resetpassword_validate , name='resetpassword_validate'),
+
+    path('resetPassword/', resetPassword , name='resetPassword'),
+
+    path('checkout/', checkout , name='checkout'),
+    ]
