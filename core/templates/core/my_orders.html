@@ -1,0 +1,44 @@
+{% extends "core/base.html" %}
+{% block main %}
+<div class="container mx-auto px-4 py-8">
+    <h2 class="text-2xl md:text-3xl font-bold mb-6 text-gray-800">My Orders</h2>
+
+    {% if orders %}
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {% for order in orders %}
+            <div class="bg-white shadow-lg rounded-2xl p-6 hover:shadow-2xl transition">
+                <div class="flex justify-between items-center mb-3">
+                    <p class="text-sm text-gray-500">Order No: 
+                        <span class="font-semibold">{{ order.order_number }}</span>
+                    </p>
+                    <span class="px-3 py-1 text-xs rounded-full 
+                        {% if order.status == 'Completed' %} bg-green-100 text-green-600
+                        {% elif order.status == 'Cancelled' %} bg-red-100 text-red-600
+                        {% else %} bg-yellow-100 text-yellow-600 {% endif %}">
+                        {{ order.status }}
+                    </span>
+                </div>
+
+                <p class="text-gray-700 text-sm mb-2">Placed on: {{ order.created_at|date:"M d, Y" }}</p>
+                <p class="text-gray-900 font-bold text-lg mb-4">₹{{ order.order_total }}</p>
+
+                <a href="{% url 'order_detail' order.id %}" 
+                   class="w-full inline-block text-center px-4 py-2 text-sm font-semibold text-white bg-indigo-600 rounded-lg hover:bg-indigo-700 transition">
+                    View Details
+                </a>
+                
+
+            </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="text-center py-12">
+            <h3 class="text-lg font-medium text-gray-700">No orders found 😔</h3>
+            <a href="{% url 'paintings' %}" 
+               class="mt-4 inline-block px-5 py-2 text-white bg-indigo-600 rounded-lg hover:bg-indigo-700 transition">
+                Continue Shopping
+            </a>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

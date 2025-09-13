@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.shortcuts import render, get_object_or_404, redirect
 from store.models import Product
 from category.models import Category
@@ -10,6 +11,20 @@ from django.contrib import messages, auth
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.password_validation import validate_password, ValidationError
 import requests
+import datetime
+from orders.forms import OrderForm
+from orders.models import Order ,Payment,Refund,OrderProduct
+import razorpay
+from django.views.decorators.csrf import csrf_exempt
+from django.http import JsonResponse , HttpResponseBadRequest,HttpResponse
+import hmac
+import hashlib
+import json
+from django.contrib.admin.views.decorators import staff_member_required
+from django.urls import reverse
+from django.template.loader import get_template
+from xhtml2pdf import pisa
+
 
 # verification email files
 from django.contrib.sites.shortcuts import get_current_site
@@ -267,8 +282,7 @@ def activate(req, uidb64, token):
         return redirect('signup')
 
 
-def dashboard(req):
-    return render(req, 'core/dashboard.html')
+
 
 
 def forgot_password(req):
@@ -370,7 +384,434 @@ def checkout(req):
     return render(req, 'core/checkout.html', context)
 
 
+def payments(req):
+    return render(req , 'core/payments.html')
+
+
+
+client= razorpay.Client(auth=(settings.RAZORPAY_KEY_ID,settings.RAZORPAY_KEY_SECRET))
+
+def place_order(req ,total = 0 , quantity = 0 ):
+    current_user = req.user
+
+    # if  the cart count is less than or equal to 0 then redirect  back to shop 
+
+    cart_items = CartItem.objects.filter(user = current_user)
+    cart_count = cart_items.count() 
+    if cart_count <=0:
+        return redirect('paintings')
+    
+
+    grand_total = 0
+    tax = 0
+    for cart_item in cart_items:
+        total += (cart_item.product.price * cart_item.quantity)
+        quantity += cart_item.quantity
+    tax = (2*total)/100
+    grand_total = total + tax
+    amount_in_paise = int(grand_total * 100)
+    
+
+    if req.method =='POST':
+        form = OrderForm(req.POST)
+        if form.is_valid():
+            # store all the billing information inside  order table
+            data = Order()
+            data.user = current_user
+            data.first_name = form.cleaned_data['first_name']
+            data.last_name = form.cleaned_data['last_name']
+            data.phone = form.cleaned_data['phone']
+            data.email = form.cleaned_data['email']
+            data.address = form.cleaned_data['address']
+            data.country = form.cleaned_data['country']
+            data.state = form.cleaned_data['state']
+            data.city = form.cleaned_data['city']
+            data.zipcode = form.cleaned_data['zipcode']
+            data.note = form.cleaned_data['note']
+            data.order_total = grand_total
+            data.tax = tax
+            data.ip = req.META.get('REMOTE_ADDR')
+            data.save()
+            #Generate order number
+            yr = int(datetime.date.today().strftime('%Y'))
+            dt = int(datetime.date.today().strftime('%d'))
+            mt = int(datetime.date.today().strftime('%m'))
+            d  = datetime.date(yr ,mt, dt)
+            current_date = d.strftime("%Y%m%d")
+            order_number = current_date + str(data.id)
+            data.order_number = order_number
+            data.save()
+
+              # Create Razorpay Order
+            razorpay_order = client.order.create({
+            "amount":  amount_in_paise,    # in paise
+            "currency": "INR",
+            "payment_capture": "1"
+            })
+
+            payment = Payment.objects.create(
+            user=current_user,
+            payment_id="",  # will fill after success
+            payment_method="Razorpay",
+            razorpay_order_id=razorpay_order['id'],
+            amount_paid=grand_total,
+            status="Pending",
+            transaction_details= razorpay_order 
+        )
+             # link in our Order
+            order = Order.objects.get(user = current_user , is_ordered = False ,order_number = order_number ) 
+            order.razorpay_order_id = razorpay_order['id']
+            order.payment = payment
+            order.save()
+
+            context ={
+                'order':order,
+                'cart_items': cart_items,
+                'total':total,
+                'tax': tax,
+                'grand_total':grand_total,
+                "amount_in_paise": amount_in_paise, 
+                'razorpay_order_id': razorpay_order['id'],
+                'razorpay_merchant_key': settings.RAZORPAY_KEY_ID,
+                'currency': 'INR',
+               'callback_url': f"{req.scheme}://{req.get_host()}{reverse('razorpay_callback')}",
+                'fail_redirect_url': req.build_absolute_uri('failed/'),
+            }
+            return render(req, 'core/payments.html' ,context) 
+    else:
+        return redirect('checkout')
+   
+
+@csrf_exempt
+def razorpay_callback(request):
+    if request.method == "POST":
+        try:
+            data = request.POST
+            print("CALLBACK DATA:", data)
+
+            razorpay_order_id = data.get("razorpay_order_id")
+            razorpay_payment_id = data.get("razorpay_payment_id")
+            razorpay_signature = data.get("razorpay_signature")
+
+            order = get_object_or_404(Order, razorpay_order_id=razorpay_order_id)
+            payment = order.payment
+
+            params_dict = {
+                "razorpay_order_id": razorpay_order_id,
+                "razorpay_payment_id": razorpay_payment_id,
+                "razorpay_signature": razorpay_signature,
+            }
+
+            try:
+                # 🔹 Verify Razorpay signature
+                client.utility.verify_payment_signature(params_dict)
+
+                # 🔹 Update Payment
+                payment.payment_id = razorpay_payment_id
+                payment.razorpay_signature = razorpay_signature
+                payment.status = "Completed"
+                payment.transaction_details = dict(data)
+                payment.save()
+
+                # 🔹 Update Order
+                order.payment = payment
+                order.is_ordered = True
+                order.status = "Accepted"
+                order.save()
+
+                # 🔹 Move cart items to OrderProduct
+                cart_items = CartItem.objects.filter(user=order.user)
+                for item in cart_items:
+                    OrderProduct.objects.create(
+                        order=order,
+                        payment=payment,
+                        user=order.user,
+                        product=item.product,
+                        quantity=item.quantity,
+                        product_price=item.product.price,
+                        ordered=True,
+                    )
+
+                    # reduce stock
+                    item.product.stock -= item.quantity
+                    item.product.save()
+
+                # clear cart
+                cart_items.delete()
+
+                # 🔹 Send Order Confirmation Mail (only once ✅)
+                try:
+                    mail_subject = "Thank you for your order!"
+                    message = render_to_string(
+                        "core/order_received.html", {"user": order.user, "order": order}
+                    )
+                    send_email = EmailMessage(mail_subject, message, to=[order.user.email])
+                    send_email.send()
+                except Exception as e:
+                    print("⚠️ Email sending failed:", str(e))
+
+                print("✅ Order placed successfully!")
+                return redirect("payment_success_page")
+
+            except razorpay.errors.SignatureVerificationError:
+                print("❌ Signature verification failed")
+                payment.status = "Failed"
+                payment.save()
+                return redirect("payment_failed_page")
+
+        except Exception as e:
+            print("❌ Callback error:", str(e))
+            return redirect("payment_failed_page")
+
+    return JsonResponse({"status": "Invalid request"}, status=400)
+
+
+
+@csrf_exempt
+def razorpay_webhook(request):
+    if request.method == "POST":
+        try:
+            # 1. Razorpay payload + signature निकालो
+            payload = request.body.decode('utf-8')
+            received_signature = request.headers.get('X-Razorpay-Signature')
+
+            # 2. Webhook signature verify करो
+            secret = settings.RAZORPAY_WEBHOOK_SECRET.encode()
+            generated_signature = hmac.new(
+                secret,
+                msg=payload.encode(),
+                digestmod=hashlib.sha256
+            ).hexdigest()
+
+            if not hmac.compare_digest(received_signature, generated_signature):
+                return HttpResponseBadRequest("Invalid Signature")
+
+            # 3. Parse JSON payload
+            data = json.loads(payload)
+            event = data.get("event")
+
+            # 4. Event के हिसाब से action लो
+            if event == "payment.captured":
+                payment_id = data["payload"]["payment"]["entity"]["id"]
+                razorpay_order_id = data["payload"]["payment"]["entity"]["order_id"]
+
+                payment = Payment.objects.filter(razorpay_order_id=razorpay_order_id).first()
+                if payment:
+                    payment.payment_id = payment_id
+                    payment.status = "Success"
+                    payment.save()
+
+                    # Order को mark करो
+                    order = Order.objects.filter(razorpay_order_id=razorpay_order_id).first()
+                    if order:
+                        order.is_ordered = True
+                        order.save()
+
+            elif event == "payment.failed":
+                razorpay_order_id = data["payload"]["payment"]["entity"]["order_id"]
+                payment = Payment.objects.filter(razorpay_order_id=razorpay_order_id).first()
+                if payment:
+                    payment.status = "Failed"
+                    payment.save()
+
+            elif event == "refund.processed":
+                razorpay_payment_id = data["payload"]["refund"]["entity"]["payment_id"]
+                payment = Payment.objects.filter(payment_id=razorpay_payment_id).first()
+                if payment:
+                    payment.status = "Refunded"
+                    payment.save()
+
+            return JsonResponse({"status": "ok"})
+        except Exception as e:
+            return HttpResponseBadRequest(str(e))
+    else:
+        return HttpResponseBadRequest("Invalid Method")
+
+
+@staff_member_required
+def refund_payment(request, payment_id):
+    payment = get_object_or_404(Payment, id=payment_id)
+
+    if not payment.payment_id:
+        return HttpResponseBadRequest("No captured payment_id to refund.")
+
+    try:
+        # Razorpay refund API
+        refund_response = client.payment.refund(
+            payment.payment_id,
+            {
+                "amount": int(payment.amount_paid * 100),  # Full refund (paise)
+                "speed": "optimum"  # "optimum" or "normal"
+            }
+        )
+
+        # Save refund record
+        refund = Refund.objects.create(
+            payment=payment,
+            refund_id=refund_response["id"],
+            amount=payment.amount_paid,
+            reason="Customer requested refund",
+            status="Processed"
+        )
+
+        # Update Payment status
+        payment.status = "Refunded"
+        payment.save()
+
+        return HttpResponse(f"Refund successful. Refund ID: {refund.refund_id}")
+
+    except Exception as e:
+        # If refund failed
+        Refund.objects.create(
+            payment=payment,
+            amount=payment.amount_paid,
+            reason=str(e),
+            status="Failed"
+        )
+        return HttpResponseBadRequest(f"Refund failed: {str(e)}")
+
+
+
+
+def payment_success_page(request):
+    try:
+        # ✅ Latest successful order nikal lo user ka
+        order = Order.objects.filter(user=request.user, is_ordered=True).latest('created_at')
+        order_products = OrderProduct.objects.filter(order=order)
+    except Order.DoesNotExist:
+        order = None
+        order_products = []
+
+    # ----- Calculate Totals -----
+    total = 0
+    for item in order_products:
+        item.item_total = item.product_price * item.quantity  # 👈 per-item total
+        total += item.item_total
+
+    tax = order.tax if order else 0
+    shipping_charge = order.shipping_charge if order else 0
+    grand_total = total + tax + shipping_charge
+
+    return render(request, "core/payment_success.html", {
+        "order": order,
+        "order_products": order_products,
+        "payment": order.payment if order else None,
+        "total": total,
+        "tax": tax,
+        "shipping_charge": shipping_charge,
+        "grand_total": grand_total,
+    })
+
+
+def payment_failed_page(request):
+    return render(request, 'core/payment_failed.html')
+
+
+
+@login_required
+def dashboard(request):
+    orders = Order.objects.filter(user=request.user).order_by('-created_at')
+    total_orders = orders.count()
+    pending_orders = orders.filter(status="Pending").count()
+    recent_orders = orders[:5]  # sirf last 5 orders dikhane ke liye
+    
+    context = {
+        "total_orders": total_orders,
+        "pending_orders": pending_orders,
+        "recent_orders": recent_orders,
+    }
+    return render(request, "core/dashboard.html", context)
+
+
+
+@login_required(login_url='login')
+def my_orders(request):
+    orders = Order.objects.filter(user=request.user).order_by('-created_at')
+    context = {
+        'orders': orders,
+    }
+    return render(request, 'core/my_orders.html', context)
+
+
+@login_required(login_url='login')
+def order_detail(request, order_id):
+    order = get_object_or_404(Order, id=order_id, user=request.user)
+    order_products = OrderProduct.objects.filter(order=order)
+
+    context = {
+        'order': order,
+        'order_products': order_products,
+    }
+    return render(request, 'core/order_detail.html', context)
+
+
+
+
+@login_required
+def invoice_view(request, order_id):
+    order = get_object_or_404(Order, id=order_id, user=request.user, is_ordered=True)
+    order_products = OrderProduct.objects.filter(order=order)
+    payment = order.payment
+
+    # ----- Calculate Totals -----
+    total = 0
+    for item in order_products:
+        item.item_total = item.product_price * item.quantity  # per-item total
+        total += item.item_total
+
+    tax = order.tax
+    shipping_charge = order.shipping_charge
+    grand_total = total + tax + shipping_charge
+
+    context = {
+        "order": order,
+        "order_products": order_products,
+        "payment": payment,
+        "total": total,
+        "tax": tax,
+        "shipping_charge": shipping_charge,
+        "grand_total": grand_total,
+    }
+    return render(request, "core/invoice.html", context)
+
+
+@login_required
+def download_invoice(request, order_id):
+    order = get_object_or_404(Order, id=order_id, user=request.user, is_ordered=True)
+    order_products = OrderProduct.objects.filter(order=order)
+    payment = order.payment
+
+    # ----- Calculate Totals -----
+    total = 0
+    for item in order_products:
+        item.item_total = item.product_price * item.quantity  # per-item total
+        total += item.item_total
+
+    tax = order.tax
+    shipping_charge = order.shipping_charge
+    grand_total = total + tax + shipping_charge
+
+    # Render template with context
+    template = get_template('core/invoice_pdf.html')
+    html = template.render({
+        "order": order,
+        "order_products": order_products,
+        "payment": payment,
+        "total": total,
+        "tax": tax,
+        "shipping_charge": shipping_charge,
+        "grand_total": grand_total,
+    })
+
+    # Generate PDF
+    response = HttpResponse(content_type='application/pdf')
+    response['Content-Disposition'] = f'attachment; filename="Invoice_{order.order_number}.pdf"'
+    pisa.CreatePDF(html, dest=response)
+
+    return response
+
 def aboutus(req):
+    
     return render(req, 'core/aboutus.html')
 
 

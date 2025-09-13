@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'accounts',
     'store',
     'carts',
+    'orders',
 ]
 
 MIDDLEWARE = [
@@ -153,3 +154,7 @@ EMAIL_HOST_USER = 'sahiljha9192@gmail.com'# Your Gmail
 EMAIL_HOST_PASSWORD = 'kwoutftrznbrltzg'    # App password (not your real password)
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 
+from decouple import config
+
+RAZORPAY_KEY_ID = config("RAZORPAY_KEY_ID")
+RAZORPAY_KEY_SECRET = config("RAZORPAY_KEY_SECRET")

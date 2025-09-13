@@ -1,0 +1,141 @@
+{% extends "core/base.html" %}
+{% load static %}
+
+{% block title %}Your Cart - MaithilRang{% endblock %}
+
+{% block main %}
+<section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+  <h1 class="text-2xl font-bold mb-8 text-gray-900">Review Your Order & Make Payment</h1>
+
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+    
+    <!-- Left Column -->
+    <div class="lg:col-span-2 space-y-6">
+      
+      <!-- Billing Address -->
+      <div class="bg-white border rounded-lg shadow p-6">
+        <h2 class="text-lg font-semibold mb-4">Billing Address</h2>
+        <div class="text-gray-700 space-y-1 text-sm">
+          <p>{{ order.full_name }}</p>
+          <p>{{ order.address }}</p>
+          <p>{{ order.state }}, {{ order.city }}</p>
+          <p>{{ order.country }}</p>
+          <p>{{ order.zipcode }}</p>
+          <p>{{ order.phone }}</p>
+          {% if order.note %}
+          <p class="mt-2"><span class="font-medium">Order note:</span> {{ order.note }}</p>
+          {% endif %}
+        </div>
+      </div>
+
+      <!-- Payment Method -->
+      <div class="bg-white border rounded-lg shadow p-6">
+        <h2 class="text-lg font-semibold mb-4">Payment</h2>
+        <p class="text-gray-700 text-sm">Razorpay</p>
+      </div>
+
+      <!-- Order Review -->
+      <div class="bg-white border rounded-lg shadow p-6 overflow-x-auto">
+        <h2 class="text-lg font-semibold mb-4">Order Review</h2>
+        <table class="w-full text-sm border-collapse">
+          <thead class="bg-gray-100 text-gray-700 uppercase text-xs">
+            <tr>
+              <th class="px-4 py-3 text-left">Product</th>
+              <th class="px-4 py-3 text-center">Qty</th>
+              <th class="px-4 py-3 text-right">Price</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for cart_item in cart_items %}
+            <tr class="border-b hover:bg-gray-50">
+              <td class="px-4 py-4">
+                <div class="flex items-center gap-3">
+                  <img src="{{ cart_item.product.Product_image.url }}" alt="{{ cart_item.product.product_name }}" class="w-14 h-14 object-contain border rounded-lg" />
+                  <div>
+                    <a href="{{ cart_item.product.get_url }}" class="font-medium text-gray-900 hover:underline">{{ cart_item.product.product_name }}</a>
+                    {% if cart_item.product.description %}
+                    <p class="text-xs text-gray-500">{{ cart_item.product.description }}</p>
+                    {% endif %}
+                  </div>
+                </div>
+              </td>
+              <td class="px-4 py-4 text-center font-medium text-gray-700">{{ cart_item.quantity }}</td>
+              <td class="px-4 py-4 text-right">
+                <p class="font-semibold text-gray-900">₹{{ cart_item.sub_total }}</p>
+                <p class="text-xs text-gray-500">₹{{ cart_item.product.price }} each</p>
+              </td>
+            </tr>
+            {% empty %}
+            <tr>
+              <td colspan="3" class="text-center py-10 text-gray-500">Your cart is empty.</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Right Column: Summary -->
+    <div class="bg-white border rounded-lg shadow p-6 h-fit">
+      <h2 class="text-lg font-semibold mb-4">Summary</h2>
+      <div class="text-sm text-gray-700 space-y-2">
+        <div class="flex justify-between">
+          <span>Total price:</span>
+          <span>₹{{ total }}</span>
+        </div>
+        <div class="flex justify-between">
+          <span>Tax:</span>
+          <span>₹{{ tax }}</span>
+        </div>
+        <div class="flex justify-between font-semibold border-t pt-2">
+          <span> Grand Total:</span>
+          <span class="text-lg text-gray-900">₹{{ grand_total }}</span>
+        </div>
+      </div>
+
+      <!-- Button -->
+      <div class="mt-6">
+        <button id="pay-btn"
+           class="w-full block bg-blue-600 hover:bg-blue-700 text-white text-center font-semibold py-3 rounded-lg transition">
+          Make Payment
+        </button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Razorpay Script -->
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<script>
+  const options = {
+    key: "{{ razorpay_merchant_key }}",
+    amount: "{{ amount_in_paise }}", // paise में
+    currency: "{{ currency }}",
+    name: "Maithilrang",
+    description: "Order #{{ order.order_number }}",
+    order_id: "{{ razorpay_order_id }}",
+    callback_url: "{{ callback_url }}",
+    prefill: {
+      name: "{{ order.first_name }} {{ order.last_name }}",
+      email: "{{ order.email }}",
+      contact: "{{ order.phone }}"
+    },
+    theme: { color: "#3399cc" },
+    modal: {
+      ondismiss: function () {
+        window.location.href = "{{ fail_redirect_url }}";
+      }
+    }
+  };
+
+  const rzp = new Razorpay(options);
+  document.getElementById("pay-btn").onclick = function(e){
+    rzp.open();
+    e.preventDefault();
+  };
+
+  rzp.on("payment.failed", function(){
+    window.location.href = "{{ fail_redirect_url }}";
+  });
+</script>
+{% endblock %}

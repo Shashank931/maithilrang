@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Invoice #{{ order.order_number }} - Maithilrang</title>
+    <style>
+        body { font-family: Arial, sans-serif; font-size: 14px; color: #333; margin: 0; padding: 0; }
+        .invoice-box { width: 800px; margin: auto; padding: 20px; border: 1px solid #eee; background: #fff; }
+        .header { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #f28c28; padding-bottom: 10px; margin-bottom: 20px; }
+        .header h2 { margin: 0; color: #f28c28; }
+        .header p { margin: 2px 0; }
+        h3 { margin-bottom: 5px; color: #444; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        table th, table td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+        table th { background: #f9f9f9; font-weight: bold; }
+        .totals { margin-top: 20px; width: 300px; float: right; border: 1px solid #eee; }
+        .totals td { padding: 6px; }
+        .totals .label { text-align: left; }
+        .totals .value { text-align: right; }
+        .footer { margin-top: 50px; text-align: center; font-size: 12px; color: #777; border-top: 1px solid #eee; padding-top: 10px; }
+    </style>
+</head>
+<body>
+    <div class="invoice-box">
+        <!-- Header -->
+        <div class="header">
+            <div>
+                <h2>🎨 Maithilrang</h2>
+                <p>Email: support@maithilrang.com</p>
+                <p>Phone: +91-XXXXXXXXXX</p>
+            </div>
+            <div style="text-align: right;">
+                <p><strong>Invoice #:</strong> {{ order.order_number }}</p>
+                <p><strong>Date:</strong> {{ order.created_at|date:"M d, Y" }}</p>
+            </div>
+        </div>
+
+        <!-- Billing Info -->
+        <div style="margin-bottom: 20px;">
+            <h3>Billing Information</h3>
+            <p><strong>{{ order.full_name }}</strong></p>
+            <p>{{ order.address }}, {{ order.city }}</p>
+            <p>{{ order.state }}, {{ order.country }} - {{ order.zipcode }}</p>
+            <p>Phone: {{ order.phone }}</p>
+            <p>Email: {{ order.email }}</p>
+        </div>
+
+        <!-- Payment Info -->
+        <div style="margin-bottom: 20px;">
+            <h3>Payment Information</h3>
+            <p>Method: {{ payment.payment_method }}</p>
+            <p>Payment ID: {{ payment.payment_id }}</p>
+            <p>Status: {{ payment.status }}</p>
+        </div>
+
+        <!-- Products Table -->
+        <table>
+            <thead>
+                <tr>
+                    <th>Product</th>
+                    <th style="text-align:center;">Qty</th>
+                    <th style="text-align:center;">Price</th>
+                    <th style="text-align:right;">Total</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in order_products %}
+                <tr>
+                    <td>{{ item.product.product_name }}</td>
+                    <td style="text-align:center;">{{ item.quantity }}</td>
+                    <td style="text-align:center;">Rs. {{ item.product_price }}</td>
+                    <td style="text-align:right;">Rs. {{ item.item_total }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <!-- Totals -->
+        <table class="totals">
+            <tr>
+                <td class="label">Total:</td>
+                <td class="value">Rs. {{ total }}</td>
+            </tr>
+            <tr>
+                <td class="label">Tax:</td>
+                <td class="value">Rs. {{ tax }}</td>
+            </tr>
+            <tr>
+                <td class="label">Shipping:</td>
+                <td class="value">Rs. {{ shipping_charge }}</td>
+            </tr>
+            <tr>
+                <td class="label"><strong>Grand Total:</strong></td>
+                <td class="value"><strong>Rs. {{ grand_total }}</strong></td>
+            </tr>
+        </table>
+
+        <!-- Footer -->
+        <div class="footer">
+            <p>Thank you for shopping with Maithilrang ❤️</p>
+            <p>If you have any issues, please contact support@maithilrang.com</p>
+        </div>
+    </div>
+</body>
+</html>
