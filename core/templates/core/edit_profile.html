@@ -1,0 +1,37 @@
+{% extends 'core/base.html' %}
+{% block main %}
+<div class="max-w-2xl mx-auto bg-white shadow-md rounded-lg p-8 mt-8">
+    <h2 class="text-2xl font-bold text-gray-800 mb-6">Edit Profile</h2>
+
+    <form method="POST" class="space-y-4">
+        {% csrf_token %}
+        
+        <!-- Render Form Fields -->
+        <div>
+            <label class="block text-gray-600 mb-1">First Name</label>
+            {{ form.first_name }}
+        </div>
+
+        <div>
+            <label class="block text-gray-600 mb-1">Last Name</label>
+            {{ form.last_name }}
+        </div>
+
+        <div>
+            <label class="block text-gray-600 mb-1">Phone Number</label>
+            {{ form.phone_number }}
+        </div>
+
+        <div class="flex justify-end space-x-3 mt-6">
+            <a href="{% url 'profile_view' %}" 
+               class="px-4 py-2 bg-gray-300 text-gray-800 rounded-lg shadow hover:bg-gray-400 transition">
+               Cancel
+            </a>
+            <button type="submit" 
+                    class="px-6 py-2 bg-orange-500 text-white rounded-lg shadow hover:bg-orange-600 transition">
+                💾 Save Changes
+            </button>
+        </div>
+    </form>
+</div>
+{% endblock %}

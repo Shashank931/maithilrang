@@ -1,0 +1,48 @@
+{% extends 'core/base.html' %}
+{% block main %}
+<div class="max-w-3xl mx-auto bg-white shadow-md rounded-lg p-8 mt-8">
+    
+    <!-- Header -->
+    <div class="flex items-center justify-between border-b pb-4 mb-6">
+        <h2 class="text-2xl font-bold text-gray-800">My Profile</h2>
+        <a href="{% url 'edit_profile' %}"
+           class="px-4 py-2 bg-orange-500 text-white rounded-lg shadow hover:bg-orange-600 transition">
+            ✏️ Edit Profile
+        </a>
+    </div>
+
+    <!-- User Info -->
+    <div class="space-y-4">
+        <div>
+            <p class="text-sm text-gray-500">Full Name</p>
+            <p class="text-lg font-semibold">{{ user.first_name }} {{ user.last_name }}</p>
+        </div>
+
+        <div>
+            <p class="text-sm text-gray-500">Username</p>
+            <p class="text-lg font-semibold">{{ user.username }}</p>
+        </div>
+
+        <div>
+            <p class="text-sm text-gray-500">Email</p>
+            <p class="text-lg font-semibold">{{ user.email }}</p>
+        </div>
+
+        <div>
+            <p class="text-sm text-gray-500">Phone Number</p>
+            <p class="text-lg font-semibold">{{ user.phone_number }}</p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+                <p class="text-sm text-gray-500">Date Joined</p>
+                <p class="text-lg font-semibold">{{ user.date_joined|date:"M d, Y H:i" }}</p>
+            </div>
+            <div>
+                <p class="text-sm text-gray-500">Last Login</p>
+                <p class="text-lg font-semibold">{{ user.last_login|date:"M d, Y H:i" }}</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

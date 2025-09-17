@@ -92,6 +92,10 @@
           <span>Total price:</span>
           <span>₹{{ total }}</span>
         </div>
+        {% comment %} <div class="flex justify-between">
+          <span>shipping charge:</span>
+          <span>₹{{ shipping_charge }}</span>
+        </div> {% endcomment %}
         <div class="flex justify-between">
           <span>Tax:</span>
           <span>₹{{ tax }}</span>
@@ -103,12 +107,12 @@
       </div>
 
       <!-- Payment Icons -->
-      <div class="flex justify-center gap-2 mt-4">
+      {% comment %} <div class="flex justify-center gap-2 mt-4">
         <img src="{% static 'images/payments/paypal.png' %}" alt="PayPal" class="h-6" />
         <img src="{% static 'images/payments/visa.png' %}" alt="Visa" class="h-6" />
         <img src="{% static 'images/payments/mastercard.png' %}" alt="MasterCard" class="h-6" />
         <img src="{% static 'images/payments/amex.png' %}" alt="AmEx" class="h-6" />
-      </div>
+      </div> {% endcomment %}
 
       <!-- Buttons -->
       <div class="mt-6 space-y-2">

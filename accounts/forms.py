@@ -38,3 +38,23 @@ class SignupForm(forms.ModelForm):
 
         if password and confirm_password and password != confirm_password:
             raise forms.ValidationError("Passwords do not match.")
+
+
+
+
+
+class ProfileForm(forms.ModelForm):
+    class Meta:
+        model = Account
+        fields = ["first_name", "last_name", "phone_number"]
+        widgets = {
+            "first_name": forms.TextInput(attrs={
+                "class": "w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
+            }),
+            "last_name": forms.TextInput(attrs={
+                "class": "w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
+            }),
+            "phone_number": forms.TextInput(attrs={
+                "class": "w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
+            }),
+        }

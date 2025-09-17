@@ -1,5 +1,5 @@
 from django.urls import path
-from core.views import home , login , signup , aboutus , paintings ,contactus , product_details , cart , add_cart , remove_cart , remove_cart_item , search , logout ,activate , dashboard ,forgot_password , resetpassword_validate , resetPassword , checkout , place_order , payments ,razorpay_callback , razorpay_webhook,refund_payment,payment_failed_page,payment_success_page , my_orders ,order_detail , invoice_view , download_invoice
+from core.views import home , login , signup , aboutus , paintings ,contactus , product_details , cart , add_cart , remove_cart , remove_cart_item , search , logout ,activate , dashboard ,forgot_password , resetpassword_validate , resetPassword , checkout , place_order , payments ,razorpay_callback , razorpay_webhook,refund_payment,payment_failed_page,payment_success_page , my_orders ,order_detail , invoice_view , download_invoice , profile_view ,edit_profile
 urlpatterns = [
 
     path('',home, name = 'home' ),
@@ -32,6 +32,9 @@ urlpatterns = [
 
     path('dashboard/', dashboard , name='dashboard'),
     path("orders/", my_orders, name="my_orders"),
+    path("profile/", profile_view, name="profile_view"),
+    path("profile/edit/", edit_profile, name="edit_profile"),
+
     path("orders/<str:order_id>/", order_detail, name="order_detail"),
 
     path('forgot_password/', forgot_password , name='forgot_password'),

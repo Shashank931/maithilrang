@@ -24,7 +24,7 @@ from django.contrib.admin.views.decorators import staff_member_required
 from django.urls import reverse
 from django.template.loader import get_template
 from xhtml2pdf import pisa
-
+from accounts.forms import ProfileForm
 
 # verification email files
 from django.contrib.sites.shortcuts import get_current_site
@@ -380,6 +380,7 @@ def checkout(req):
         'cart_items': cart_items,
         'tax': tax,
         'grand_total': grand_total,
+        
     }
     return render(req, 'core/checkout.html', context)
 
@@ -809,6 +810,32 @@ def download_invoice(request, order_id):
     pisa.CreatePDF(html, dest=response)
 
     return response
+
+
+@login_required
+def profile_view(request):
+    user = request.user  # logged-in user ka data
+    context = {
+        "user": user,
+    }
+    return render(request, "core/profile.html", context)
+
+
+
+@login_required
+def edit_profile(request):
+    user = request.user
+    if request.method == "POST":
+        form = ProfileForm(request.POST, instance=user)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "✅ Profile updated successfully!")
+            return redirect("profile_view")  # redirect back to profile page
+    else:
+        form = ProfileForm(instance=user)
+
+    return render(request, "core/edit_profile.html", {"form": form})
+
 
 def aboutus(req):
     
